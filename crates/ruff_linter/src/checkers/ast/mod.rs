@@ -110,7 +110,7 @@ pub(crate) struct Checker<'a> {
     /// The [`Path`] to the package containing the current file.
     package: Option<&'a Path>,
     /// The module representation of the current file (e.g., `foo.bar`).
-    module_path: Option<&'a [String]>,
+    module: Module<'a>,
     /// The [`PySourceType`] of the current file.
     pub(crate) source_type: PySourceType,
     /// The [`CellOffsets`] for the current file, if it's a Jupyter notebook.
@@ -174,7 +174,7 @@ impl<'a> Checker<'a> {
             noqa,
             path,
             package,
-            module_path: module.path(),
+            module,
             source_type,
             locator,
             stylist,

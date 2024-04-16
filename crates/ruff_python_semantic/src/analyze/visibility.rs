@@ -141,7 +141,7 @@ fn stem(path: &str) -> &str {
 /// A Python module can either be defined as a module path (i.e., the dot-separated path to the
 /// module) or, if the module can't be resolved, as a file path (i.e., the path to the file defining
 /// the module).
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum ModuleSource<'a> {
     /// A module path is a dot-separated path to the module.
     Path(&'a [String]),
@@ -152,7 +152,7 @@ pub enum ModuleSource<'a> {
 
 impl ModuleSource<'_> {
     /// Return the `Visibility` of the module.
-    pub(crate) fn to_visibility(&self) -> Visibility {
+    pub(crate) fn to_visibility(self) -> Visibility {
         match self {
             Self::Path(path) => {
                 if path.iter().any(|m| is_private_module(m)) {
@@ -176,6 +176,7 @@ impl ModuleSource<'_> {
     }
 }
 
+/// Infer the [`Visibility`] of a function from its name.
 pub(crate) fn function_visibility(function: &ast::StmtFunctionDef) -> Visibility {
     if function.name.starts_with('_') {
         Visibility::Private
@@ -184,6 +185,7 @@ pub(crate) fn function_visibility(function: &ast::StmtFunctionDef) -> Visibility
     }
 }
 
+/// Infer the [`Visibility`] of a method from its name and decorators.
 pub fn method_visibility(function: &ast::StmtFunctionDef) -> Visibility {
     // Is this a setter or deleter?
     if function.decorator_list.iter().any(|decorator| {
@@ -208,6 +210,7 @@ pub fn method_visibility(function: &ast::StmtFunctionDef) -> Visibility {
     Visibility::Private
 }
 
+/// Infer the [`Visibility`] of a class from its name.
 pub(crate) fn class_visibility(class: &ast::StmtClassDef) -> Visibility {
     if class.name.starts_with('_') {
         Visibility::Private

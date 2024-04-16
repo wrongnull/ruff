@@ -606,7 +606,8 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
                     pylint::rules::manual_from_import(checker, stmt, alias, names);
                 }
                 if checker.enabled(Rule::ImportSelf) {
-                    if let Some(diagnostic) = pylint::rules::import_self(alias, checker.module_path)
+                    if let Some(diagnostic) =
+                        pylint::rules::import_self(alias, checker.module.path())
                     {
                         checker.diagnostics.push(diagnostic);
                     }
@@ -771,7 +772,7 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
             }
             if checker.enabled(Rule::BannedApi) {
                 if let Some(module) =
-                    helpers::resolve_imported_module_path(level, module, checker.module_path)
+                    helpers::resolve_imported_module_path(level, module, checker.module.path())
                 {
                     flake8_tidy_imports::rules::banned_api(
                         checker,
@@ -800,7 +801,7 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
             }
             if checker.enabled(Rule::BannedModuleLevelImports) {
                 if let Some(module) =
-                    helpers::resolve_imported_module_path(level, module, checker.module_path)
+                    helpers::resolve_imported_module_path(level, module, checker.module.path())
                 {
                     flake8_tidy_imports::rules::banned_module_level_imports(
                         checker,
@@ -888,7 +889,7 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
                         stmt,
                         level,
                         module,
-                        checker.module_path,
+                        checker.module.path(),
                         checker.settings.flake8_tidy_imports.ban_relative_imports,
                     ) {
                         checker.diagnostics.push(diagnostic);
@@ -988,7 +989,7 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
             }
             if checker.enabled(Rule::ImportSelf) {
                 if let Some(diagnostic) =
-                    pylint::rules::import_from_self(level, module, names, checker.module_path)
+                    pylint::rules::import_from_self(level, module, names, checker.module.path())
                 {
                     checker.diagnostics.push(diagnostic);
                 }

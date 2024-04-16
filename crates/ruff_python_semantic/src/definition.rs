@@ -24,7 +24,7 @@ impl DefinitionId {
     }
 }
 
-#[derive(Debug, is_macro::Is)]
+#[derive(Debug, Copy, Clone, is_macro::Is)]
 pub enum ModuleKind {
     /// A Python file that represents a module within a package.
     Module,
@@ -33,7 +33,7 @@ pub enum ModuleKind {
 }
 
 /// A Python module.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Module<'a> {
     pub kind: ModuleKind,
     pub source: ModuleSource<'a>,
@@ -41,6 +41,7 @@ pub struct Module<'a> {
 }
 
 impl<'a> Module<'a> {
+    /// Return the fully-qualified path of the module.
     pub fn path(&self) -> Option<&'a [String]> {
         if let ModuleSource::Path(path) = self.source {
             Some(path)
